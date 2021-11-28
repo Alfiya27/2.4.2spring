@@ -1,55 +1,19 @@
 package web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
-import web.service.UserService;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    UserService userService;
-
     @GetMapping
-    public String usersList(Model model) {
-        model.addAttribute("users", userService.usersList());
-        return "users/index";
-    }
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "users/show";
-    }
-
-    @PostMapping
-    public String create(@ModelAttribute("user") User user) {
-        userService.addUser(user);
-        return "redirect:/users";
-    }
-
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "users/new";
-    }
-
-
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "users/edit";
-    }
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user) {
-        userService.updateUser(user);
-        return "redirect:/users";
-    }
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id) {
-        userService.removeUser(id);
-        return "redirect:/users";
+    public String usersInfo(@AuthenticationPrincipal User user, Model model) {
+        model.addAttribute("user", user);
+        model.addAttribute("roles", user.getRoles());
+        return "info";
     }
 }
